@@ -1,0 +1,55 @@
+# ========================================
+# MediVault RAG Bot — Requirements
+# ========================================
+# System prerequisites (NOT pip-installable):
+#   Tesseract OCR: https://github.com/UB-Mannheim/tesseract/wiki
+#   Poppler:       https://github.com/oschwartz10612/poppler-windows/releases
+# ========================================
+
+# ========== PDF Processing ==========
+pdfplumber==0.10.3
+pdf2image==1.17.0
+pypdf==4.0.1
+
+# ========== OCR ==========
+pytesseract==0.3.10
+Pillow==10.2.0
+
+# ========== Vector Store & Database ==========
+pymongo==4.6.1
+
+# ========== LLM & Embeddings ==========
+# Local embeddings (free, runs on your machine)
+sentence-transformers==2.3.1
+torch>=2.0.0
+
+# HTTP client for Groq / Ollama API
+requests==2.31.0
+
+# OpenAI SDK (used in llm_handler for API-compatible calls to Groq)
+openai==1.10.0
+
+# ========== API Framework ==========
+fastapi==0.109.0
+uvicorn==0.27.0
+python-multipart==0.0.6
+
+# ========== Data Validation ==========
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# ========== Utilities ==========
+python-dotenv==1.0.0
+numpy==1.26.3
+tenacity==8.2.3
+tqdm==4.66.1
+
+# ========== LangChain (retrieval helpers) ==========
+langchain==0.1.0
+langchain-community==0.0.13
+langchain-core==0.1.9
+
+# ========== Testing (dev only — not needed in production) ==========
+pytest==7.4.4
+pytest-asyncio==0.21.1
+httpx==0.25.2

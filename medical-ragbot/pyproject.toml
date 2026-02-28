@@ -1,0 +1,25 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+    "--color=yes",
+    "-p", "no:warnings",
+    "--durations=10"
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m not slow')",
+    "integration: marks integration tests requiring DB/API connections",
+    "unit: pure unit tests, no external dependencies",
+    "safety: critical patient safety tests",
+    "domain: medical domain-specific tests",
+    "edge: edge case and boundary tests",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]

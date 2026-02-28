@@ -1,0 +1,84 @@
+# ============================================
+# render.yaml — Render Deployment Config
+# https://render.com/docs/blueprint-spec
+# ============================================
+
+services:
+  - type: web
+    name: medivault-ragbot
+    runtime: docker              # Use our Dockerfile (handles OCR deps automatically)
+    dockerfilePath: ./Dockerfile
+    region: oregon               # or singapore / frankfurt — pick closest to your users
+
+    # Render sets $PORT automatically — our Dockerfile reads it
+    # Start command is defined in Dockerfile CMD
+
+    # Environment variables — set these in Render Dashboard
+    # (DO NOT put real values here — this file is in git)
+    envVars:
+      #  LLM 
+      - key: LLM_PROVIDER
+        value: groq
+      - key: LLM_MODEL
+        value: llama-3.1-8b-instant
+      - key: LLM_TEMPERATURE
+        value: "0.1"
+      - key: LLM_MAX_TOKENS
+        value: "1500"
+
+      #  Groq API Key (set secret in Render Dashboard) 
+      - key: GROQ_API_KEY
+        sync: false              # Render will prompt you to enter this secret
+
+      #  MongoDB Atlas 
+      - key: MONGODB_URI
+        sync: false              # Enter your Atlas connection string in Dashboard
+      - key: MONGODB_DB_NAME
+        value: medivault
+      - key: MONGODB_COLLECTION_NAME
+        value: medical_vectors
+
+      #  Embeddings 
+      - key: USE_LOCAL_EMBEDDINGS
+        value: "true"
+      - key: LOCAL_EMBEDDING_MODEL
+        value: BAAI/bge-base-en-v1.5
+      - key: EMBEDDING_DIMENSION
+        value: "768"
+
+      #  OCR — Linux paths (Dockerfile installs these) 
+      - key: TESSERACT_PATH
+        value: /usr/bin/tesseract     # installed by apt-get in Dockerfile
+      - key: POPPLER_PATH
+        value: ""                     # poppler-utils is in PATH — leave blank
+      - key: OCR_LANGUAGE
+        value: eng
+
+      #  Chunking 
+      - key: CHUNK_SIZE
+        value: "600"
+      - key: CHUNK_OVERLAP_PERCENT
+        value: "0.25"
+
+      #  API 
+      - key: API_HOST
+        value: "0.0.0.0"
+
+      #  CORS — restrict to your frontend domain 
+      # Replace with your actual frontend URL
+      - key: CORS_ORIGINS
+        value: '["*"]'               # TODO: change to your frontend URL before going live
+
+      #  Vector Search 
+      - key: VECTOR_INDEX_NAME
+        value: vector_index
+      - key: DEFAULT_RETRIEVAL_K
+        value: "5"
+      - key: MAX_CONTEXT_LENGTH
+        value: "3500"
+
+    # Health check — Render pings this to verify app is up
+    healthCheckPath: /health
+
+    # Auto-deploy on every push to main
+    autoDeploy: true

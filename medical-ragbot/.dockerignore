@@ -1,0 +1,38 @@
+# ================================
+# .dockerignore
+# Files NOT to include in Docker image
+# ================================
+
+# Secrets — NEVER bake into image
+.env
+.env.local
+
+# Git
+.git
+.gitignore
+.pytest_cache
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Test files — not needed at runtime
+tests/
+
+# Raw patient PDFs — never bake into image
+# They are uploaded at runtime via /ingest/upload
+data/raw_pdfs/
+data/processed_text/
+
+# OS / editor artifacts
+.DS_Store
+*.log
+Thumbs.db
+
+# Docs (optional — comment out if you want them in image)
+# README.md
+# ARCHITECTURE.md
+# PRODUCTION.md
