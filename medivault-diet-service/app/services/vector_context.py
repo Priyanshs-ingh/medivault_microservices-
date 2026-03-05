@@ -42,8 +42,8 @@ async def get_embedding(text: str, settings: Settings) -> List[float]:
 
     Priority order:
       1. OpenAI (text-embedding-3-small, dim=768 to match RAG index)
-      2. Gemini (text-embedding-004, 768 dim natively)
-      3. Sentence-transformers local fallback (BAAI/bge-base-en-v1.5, 768 dim)
+      2. Sentence-transformers local fallback (BAAI/bge-base-en-v1.5, 768 dim)
+         (Gemini skipped: gemini-embedding-001 returns 3072 dims, mismatches Atlas index)
 
     Groq and Anthropic do not support embeddings — skipped.
     Never crashes — returns empty list on total failure.
@@ -73,36 +73,9 @@ async def get_embedding(text: str, settings: Settings) -> List[float]:
                 error=str(exc),
             )
 
-    # 2. Try Gemini
-    if settings.gemini_api_key and settings.gemini_api_key.strip():
-        try:
-            import google.generativeai as genai
-
-            genai.configure(api_key=settings.gemini_api_key)
-
-            # genai.embed_content is synchronous — run in thread pool
-            loop = asyncio.get_running_loop()
-            result = await loop.run_in_executor(
-                None,
-                lambda: genai.embed_content(
-                    model="models/text-embedding-004",
-                    content=text,
-                    task_type="retrieval_query",
-                ),
-            )
-            embedding = result["embedding"]
-            logger.info(
-                "embedding_generated",
-                provider="gemini",
-                model="text-embedding-004",
-                dimensions=len(embedding),
-            )
-            return embedding
-        except Exception as exc:
-            logger.warning(
-                "gemini_embedding_failed",
-                error=str(exc),
-            )
+    # 2. Gemini embedding skipped: gemini-embedding-001 returns 3072 dims but the
+    #    Atlas vector index is fixed at 768 dims (matching sentence-transformers).
+    #    Enabling it would silently break vector search with a dimension mismatch.
 
     # 3. Sentence-transformers local fallback
     try:
